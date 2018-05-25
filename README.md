@@ -1,2 +1,1 @@
-# lovejs-graphql
-LoveJs Graphql Plugin
+# Love Js - Graphql plugin

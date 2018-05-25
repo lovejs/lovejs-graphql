@@ -1,13 +1,19 @@
 {
     "name": "@lovejs/graphql",
+    "author": "Vincent <vincent@fullstack.pro>",
     "version": "0.0.1",
-    "description": "",
+    "description": "Lovejs graphql",
     "main": "src/index.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+    "keywords": ["lovejs", "graphql", "lovejs plugin"],
+    "license": "MIT",
+    "homepage": "http://lovejs.io/",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/lovejs/lovejs-graphql.git"
     },
-    "author": "",
-    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/lovejs/lovejs-graphql/issues"
+    },
     "dependencies": {
         "apollo-server-koa": "^1.3.5",
         "graphql": "^0.11.7",
