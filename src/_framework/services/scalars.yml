@@ -1,0 +1,30 @@
+services:
+    graphql.scalar.json:
+        module:     graphql-type-json
+        creation:   module
+        tags:       [{ tag: graphql.scalar, name: JSON }]
+
+    graphql.scalar.email:
+        module:     graphql-custom-types::GraphQLEmail
+        creation:   module
+        tags:       [{ tag: graphql.scalar, name: Email }]
+
+    graphql.scalar.url:
+        module:     graphql-custom-types::GraphQLURL
+        creation:   module
+        tags:       [{ tag: graphql.scalar, name: URL }]
+
+    graphql.scalar.datetime:
+        module:     graphql-custom-types::GraphQLDateTime
+        creation:   module
+        tags:       [{ tag: graphql.scalar, name: DateTime }]
+
+    graphql.scalar.uuid:
+        module:     graphql-custom-types::GraphQLUUID
+        creation:   module
+        tags:       [{ tag: graphql.scalar, name: UUID }]
+
+    graphql.scalar.upload:
+        module:     apollo-upload-server::GraphQLUpload
+        creation:   module
+        tags:       [{ tag: graphql.scalar, name: Upload }]
