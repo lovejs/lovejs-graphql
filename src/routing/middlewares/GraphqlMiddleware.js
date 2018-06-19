@@ -17,8 +17,9 @@ class GraphqlMiddleware extends Middleware {
                 schema,
                 debug: false,
                 formatError: e => {
+                    console.log("Formatting error : ", e);
                     logger.error(e.message);
-                    return e;
+                    return e.message;
                 }
             };
 

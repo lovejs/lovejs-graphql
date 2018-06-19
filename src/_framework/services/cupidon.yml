@@ -1,0 +1,7 @@
+services:    
+    cupidon.extension.graphql:
+        module: !plugin_dir /Cupidon/CupidonGraphql
+        public: true
+        args: [ !service graphql.schema.builder, !project_dir "" ]
+        tags:   
+            - { tag: cupidon.extension, name: graphql, priority: 10 }

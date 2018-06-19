@@ -9,6 +9,7 @@ services:
                 types:       !services { tag: graphql.type }
                 inputs:      !services { tag: graphql.input }
                 enums:       !services { tag: graphql.enum }
+                unions:      !services { tag: graphql.union }
                 queries:     !services { tag: graphql.query }
                 mutations:   !services { tag: graphql.mutation }
                 interfaces:  !services { tag: graphql.interfaces }

@@ -1,6 +1,7 @@
 const GraphObject = require("./GraphObject");
 const GraphInterface = require("./GraphInterface");
 const GraphEnum = require("./GraphEnum");
+const GraphUnion = require("./GraphUnion");
 const GraphType = require("./GraphType");
 const GraphInput = require("./GraphInput");
 const GraphQuery = require("./GraphQuery");
@@ -8,9 +9,14 @@ const GraphMutation = require("./GraphMutation");
 
 const _ = require("lodash");
 
+/*
+    Permettre de prefixer globalement dans une extension
+*/
+
 class GraphExtension {
     constructor() {
         this.enums = [];
+        this.unions = [];
         this.interfaces = [];
         this.types = [];
         this.queries = [];
@@ -18,6 +24,22 @@ class GraphExtension {
         this.inputs = [];
         this.ownMiddlewares = {};
         this.current = false;
+    }
+
+    getPrefix() {
+        return "";
+    }
+
+    ref(name, isArray = false) {
+        let p = isArray ? "[" : "";
+        let s = isArray ? "]" : "";
+        let prefix = name => `${p}${this.getPrefix()}${name}${s}`;
+
+        if (_.isArray(name)) {
+            return name.map(n => prefix(n));
+        } else {
+            return prefix(name);
+        }
     }
 
     async registerObjects() {}
@@ -38,6 +60,10 @@ class GraphExtension {
         return this.types;
     }
 
+    getUnions() {
+        return this.unions;
+    }
+
     getInputs() {
         return this.inputs;
     }
@@ -52,6 +78,10 @@ class GraphExtension {
 
     addEnum(name) {
         return this.add(new GraphEnum(), name);
+    }
+
+    addUnion(name) {
+        return this.add(new GraphUnion(), name);
     }
 
     addInterface(name) {
@@ -86,12 +116,14 @@ class GraphExtension {
         if (name instanceof GraphObject) {
             instance = name;
         } else {
-            instance.setName(name);
+            instance.setName(this.ref(name));
             this.current = instance;
         }
 
         if (instance instanceof GraphEnum) {
             this.enums.push(instance);
+        } else if (instance instanceof GraphUnion) {
+            this.unions.push(instance);
         } else if (instance instanceof GraphInterface) {
             this.interfaces.push(instance);
         } else if (instance instanceof GraphType) {
@@ -138,11 +170,15 @@ class GraphExtension {
         return this.callMethod("setInterfaces", arguments);
     }
 
+    unionTypes() {
+        return this.callMethod("setTypes", arguments);
+    }
+
     input(properties, dedicatedType = false, name = false) {
         let input = properties;
         if (dedicatedType) {
             input = new GraphInput();
-            input.setName(name ? name : `${this.current.getName()}Input`);
+            input.setName(name ? this.ref(name) : `${this.current.getName()}Input`);
             input.setProperties(properties);
         }
 
@@ -151,13 +187,17 @@ class GraphExtension {
 
     output(properties, dedicatedType = false, name = false) {
         let output = properties;
-        if (dedicatedType) {
+        if (_.isPlainObject(output) || dedicatedType) {
             output = new GraphType();
-            output.setName(name ? name : `${this.current.getName()}Output`);
+            output.setName(name ? this.ref(name) : `${this.current.getName()}Output`);
             output.setProperties(properties);
         }
 
         return this.callMethod("setOutput", [output]);
+    }
+
+    resolverType() {
+        return this.callMethod("setResolverType", arguments);
     }
 
     resolver() {

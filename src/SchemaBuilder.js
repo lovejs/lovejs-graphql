@@ -5,7 +5,7 @@ const compose = require("koa-compose");
 
 class SchemaBuilder {
     constructor(
-        { types, inputs, enums, queries, mutations, interfaces, scalars = {} },
+        { types, inputs, enums, unions, queries, mutations, interfaces, scalars = {} },
         extensions = [],
         middlewares = {},
         { indentation = "    ", formatters = {} } = {}
@@ -13,6 +13,7 @@ class SchemaBuilder {
         this.types = types;
         this.inputs = inputs;
         this.enums = enums;
+        this.unions = unions;
         this.interfaces = interfaces;
         this.queries = queries;
         this.mutations = mutations;
@@ -30,6 +31,7 @@ class SchemaBuilder {
             query: query => this.schemaQuery(query),
             mutation: mutation => this.schemaMutation(mutation),
             enum: _enum => this.schemaEnum(_enum),
+            union: union => this.schemaUnion(union),
             interface: _interface => this.schemaInterface(_interface)
         });
     }
@@ -68,6 +70,10 @@ class SchemaBuilder {
 
     schemaInput(input) {
         return `\ninput ${input.getName()} {\n` + this.schemaProperties(input.getProperties()) + `\n}`;
+    }
+
+    schemaUnion(union) {
+        return `\nunion ${union.getName()} = ${union.getTypes().join(" | ")}\n`;
     }
 
     schemaQueryInput(input) {
@@ -207,6 +213,19 @@ class SchemaBuilder {
         }
     }
 
+    registerUnions(typeDefs, resolvers) {
+        for (let union of this.unions) {
+            try {
+                typeDefs.push(this.formatters.union(union));
+                resolvers[union.getName()] = {
+                    __resolveType: union.getResolverType()
+                };
+            } catch (e) {
+                throw new Error(`Error resolving graphql union ${union.getName()} ${e.message}`);
+            }
+        }
+    }
+
     registerInputs(typeDefs) {
         for (let input of this.inputs) {
             try {
@@ -298,6 +317,7 @@ class SchemaBuilder {
             this.queries = _.concat(this.queries, extension.getQueries());
             this.mutations = _.concat(this.mutations, extension.getMutations());
             this.inputs = _.concat(this.inputs, extension.getInputs());
+            this.unions = _.concat(this.unions, extension.getUnions());
         }
     }
 
@@ -311,6 +331,8 @@ class SchemaBuilder {
         this.registerEnums(typeDefs);
         this.registerInterfaces(typeDefs);
         this.registerInputs(typeDefs);
+        this.registerUnions(typeDefs, resolvers);
+
         await this.registerTypes(typeDefs, resolvers);
 
         await this.registerQueries(typeDefs, resolvers);

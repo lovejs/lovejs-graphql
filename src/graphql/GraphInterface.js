@@ -19,7 +19,7 @@ class GraphInterface extends GraphObject {
     }
 
     isComplete() {
-        return super.isComplete() && this.properties;
+        return super.isComplete() && this.getProperties();
     }
 }
 

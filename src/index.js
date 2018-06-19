@@ -12,6 +12,9 @@ class GraphqlPlugin extends Plugin {
         });
         container.setParameter("graphql.upload.options", uploadOptions || {});
         await container.loadDefinitions(__dirname + "/_framework/services/services.yml", origin);
+        if (this.hasPlugin('cupidon')) {
+            await container.loadDefinitions(__dirname + "/_framework/services/cupidon.yml", origin);
+        }
     }
 }
 

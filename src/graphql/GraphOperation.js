@@ -55,7 +55,7 @@ class GraphOperation extends GraphObject {
     }
 
     isComplete() {
-        return super.isComplete() && this.output && this.resolver;
+        return super.isComplete() && this.getOutput() && this.getResolver();
     }
 
     getMiddlewares() {

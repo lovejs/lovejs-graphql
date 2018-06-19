@@ -19,7 +19,7 @@ class GraphEnum extends GraphObject {
     }
 
     isComplete() {
-        return super.isComplete() && this.values;
+        return super.isComplete() && this.getValues();
     }
 }
 
