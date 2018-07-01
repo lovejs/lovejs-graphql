@@ -41,7 +41,7 @@ services:
         tags:       { tag: http.middleware, name: graphiql }
 
     graphql.command.schema:
-        module:     !plugin_dir /commands/Schema
+        module:     !plugin_dir /_framework/commands/Schema
         args:       [ !service graphql.schema.builder ]
         public:     true
         tags:       love.command
